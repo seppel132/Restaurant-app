@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -23,363 +23,111 @@
       --radius: 18px;
       --shadow: 0 8px 24px rgba(26, 10, 0, .10);
     }
-
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; }
     body { min-height: 100dvh; display: flex; flex-direction: column; }
-
     .hidden { display: none !important; }
-
     .app-header {
       background: var(--ink);
       color: var(--paper);
       padding: max(18px, env(safe-area-inset-top)) 18px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      box-shadow: 0 2px 18px rgba(0,0,0,.12);
+      position: sticky; top: 0; z-index: 20; box-shadow: 0 2px 18px rgba(0,0,0,.12);
     }
-
-    .app-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      font-weight: 800;
+    .app-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 800; color: var(--gold2); }
+    .app-subtitle { margin-top: 4px; font-size: 12px; color: #d2b996; }
+    .header-row { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .mode-btn {
+      border: 1px solid rgba(255,255,255,.18);
+      background: transparent;
       color: var(--gold2);
-    }
-
-    .app-subtitle {
-      margin-top: 4px;
-      font-size: 12px;
-      color: #d2b996;
-    }
-
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      padding-bottom: calc(90px + env(safe-area-inset-bottom));
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-
-    .card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      margin: 0 0 6px;
-    }
-
-    .card-sub {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 14px;
-      line-height: 1.45;
-    }
-
-    .field-label {
-      display: block;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font: inherit;
       font-size: 12px;
       font-weight: 700;
-      color: var(--muted);
-      margin-bottom: 6px;
+      cursor: pointer;
+      white-space: nowrap;
     }
-
-    .text-input {
-      width: 100%;
-      padding: 13px 14px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border);
-      background: #fff;
-      color: var(--ink);
-      font: inherit;
-      margin-bottom: 12px;
-      outline: none;
+    .content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 16px; margin-bottom: 14px;
     }
-
-    .text-input:focus { border-color: var(--gold); }
-
-    .hint {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: -6px;
-      margin-bottom: 12px;
-      line-height: 1.4;
+    .card-title { font-family: 'Playfair Display', serif; font-size: 18px; margin: 0 0 6px; }
+    .card-sub { color: var(--muted); font-size: 12px; margin-bottom: 14px; line-height: 1.45; }
+    .field-label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+    .text-input, .text-area {
+      width: 100%; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--border);
+      background: #fff; color: var(--ink); font: inherit; margin-bottom: 12px; outline: none;
     }
-
-    .score-row {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-
-    .score-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
+    .text-input:focus, .text-area:focus { border-color: var(--gold); }
+    .hint { font-size: 11px; color: var(--muted); margin-top: -6px; margin-bottom: 12px; line-height: 1.4; }
+    .score-row { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+    .score-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
     .score-name { font-weight: 700; font-size: 14px; }
     .score-weight { color: var(--muted); font-size: 11px; margin-top: 3px; }
-    .score-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      line-height: 1;
-      color: var(--gold);
-      min-width: 42px;
-      text-align: right;
-    }
-
-    input[type=range] {
-      width: 100%;
-      accent-color: var(--gold);
-      margin: 6px 0 0;
-    }
-
-    .pips {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-    }
+    .score-value { font-family: 'Playfair Display', serif; font-size: 24px; line-height: 1; color: var(--gold); min-width: 42px; text-align: right; }
+    input[type=range] { width: 100%; accent-color: var(--gold); margin: 6px 0 0; }
+    .pips { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .row { display: flex; gap: 10px; }
     .row > * { flex: 1; }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--cream);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 7px 12px;
-      font-size: 12px;
-      border: 1px solid var(--border);
-    }
-
-    .btn {
-      width: 100%;
-      border: none;
-      border-radius: 16px;
-      padding: 15px 16px;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: var(--ink);
-      color: var(--gold2);
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--muted);
-      border: 1.5px solid var(--border);
-    }
-
-    .btn-danger {
-      background: transparent;
-      color: var(--rust);
-      border: 1.5px solid #e7b4a8;
-    }
-
-    .stack-8 > * + * { margin-top: 8px; }
-    .stack-12 > * + * { margin-top: 12px; }
-
+    .pill { display: inline-flex; align-items: center; gap: 6px; background: var(--cream); color: var(--muted); border-radius: 999px; padding: 7px 12px; font-size: 12px; border: 1px solid var(--border); }
+    .btn { width: 100%; border: none; border-radius: 16px; padding: 15px 16px; font: inherit; font-weight: 700; cursor: pointer; }
+    .btn-primary { background: var(--ink); color: var(--gold2); font-family: 'Playfair Display', serif; font-size: 18px; }
+    .btn-secondary { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
+    .btn-danger { background: transparent; color: var(--rust); border: 1.5px solid #e7b4a8; }
     .tab-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      background: var(--ink);
-      padding-bottom: env(safe-area-inset-bottom);
-      z-index: 15;
-      border-top: 1px solid rgba(255,255,255,.08);
+      position: fixed; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr);
+      background: var(--ink); padding-bottom: env(safe-area-inset-bottom); z-index: 15; border-top: 1px solid rgba(255,255,255,.08);
     }
-
     .tab-btn {
-      border: none;
-      background: transparent;
-      color: #857669;
-      padding: 12px 8px 10px;
-      font: inherit;
-      font-size: 11px;
-      font-weight: 700;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
+      border: none; background: transparent; color: #857669; padding: 12px 8px 10px; font: inherit; font-size: 11px; font-weight: 700;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
     }
-
     .tab-btn.active { color: var(--gold2); }
     .tab-icon { font-size: 18px; }
-
-    .restaurant-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-      margin-bottom: 10px;
+    .restaurant-card, .suggestion-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); margin-bottom: 10px;
     }
-
-    .restaurant-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .restaurant-name {
-      font-weight: 700;
-      font-size: 15px;
-      line-height: 1.25;
-    }
-
-    .restaurant-address {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 4px;
-      line-height: 1.35;
-    }
-
+    .restaurant-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .restaurant-name { font-weight: 700; font-size: 15px; line-height: 1.25; }
+    .restaurant-address { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
     .avg-box { text-align: right; flex-shrink: 0; }
-    .avg-score {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      color: var(--gold);
-      line-height: 1;
+    .avg-score { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); line-height: 1; }
+    .avg-meta { color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .mini-btn, button.mini-btn {
+      border-radius: 999px; padding: 9px 12px; border: 1px solid var(--border); background: #fff;
+      color: var(--ink); text-decoration: none; font-size: 12px; font-weight: 700; cursor: pointer;
     }
-    .avg-meta {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 3px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    .mini-btn {
-      border-radius: 999px;
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--ink);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 36px 20px;
-      line-height: 1.55;
-    }
-
+    .empty { text-align: center; color: var(--muted); padding: 36px 20px; line-height: 1.55; }
     .toast {
-      position: fixed;
-      left: 50%;
-      bottom: calc(84px + env(safe-area-inset-bottom));
-      transform: translateX(-50%) translateY(10px);
-      background: var(--sage);
-      color: white;
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 13px;
-      opacity: 0;
-      pointer-events: none;
-      transition: .25s ease;
-      z-index: 50;
-      white-space: nowrap;
-      max-width: calc(100vw - 32px);
-      overflow: hidden;
-      text-overflow: ellipsis;
+      position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(10px);
+      background: var(--sage); color: white; border-radius: 999px; padding: 10px 18px; font-size: 13px; opacity: 0; pointer-events: none;
+      transition: .25s ease; z-index: 50; white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
     }
-
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
     .pin-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(26,10,0,.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 100;
+      position: fixed; inset: 0; background: rgba(26,10,0,.92); display: flex; align-items: center; justify-content: center; padding: 18px; z-index: 100;
     }
-
-    .pin-card {
-      width: 100%;
-      max-width: 420px;
-      background: var(--paper);
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.22);
+    .pin-card { width: 100%; max-width: 420px; background: var(--paper); border-radius: 24px; padding: 22px; box-shadow: 0 18px 40px rgba(0,0,0,.22); }
+    .pin-title { font-family: 'Playfair Display', serif; font-size: 24px; margin: 0 0 8px; }
+    .pin-text, .pin-note { color: var(--muted); line-height: 1.5; }
+    .pin-text { font-size: 13px; margin-bottom: 14px; }
+    .pin-note { margin-top: 12px; font-size: 11px; }
+    .search-wrap { position: relative; }
+    .suggestions {
+      position: absolute; left: 0; right: 0; top: calc(100% - 8px); z-index: 30; background: var(--card);
+      border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); max-height: 260px; overflow-y: auto;
     }
-
-    .pin-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      margin: 0 0 8px;
-    }
-
-    .pin-text {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 14px;
-    }
-
-    .pin-note {
-      margin-top: 12px;
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .badge-line {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
+    .suggestion-item { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .suggestion-item:last-child { border-bottom: 0; }
+    .suggestion-item strong { display: block; font-size: 14px; }
+    .suggestion-item span { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .status-line { margin-top: -4px; margin-bottom: 12px; font-size: 12px; color: var(--muted); }
     @media (min-width: 780px) {
-      .content {
-        max-width: 760px;
-        width: 100%;
-        margin: 0 auto;
-      }
-      .app-header-inner {
-        max-width: 760px;
-        margin: 0 auto;
-      }
+      .content { max-width: 760px; width: 100%; margin: 0 auto; }
+      .app-header-inner { max-width: 760px; margin: 0 auto; }
     }
   </style>
 </head>
@@ -387,17 +135,22 @@
   <div class="pin-overlay" id="pin-overlay">
     <div class="pin-card">
       <h1 class="pin-title">🍽 Restaurant Rating</h1>
-      <div class="pin-text">Zugang nur mit PIN. Danach kannst du Restaurants bewerten, deine eigene Bewertung ändern oder löschen und die Gesamtrangliste sehen.</div>
+      <div class="pin-text">Normale Nutzer bewerten nur bestehende Restaurants. Neue Restaurants können nur im Admin-Modus angelegt werden.</div>
       <input id="pin-input" class="text-input" type="password" inputmode="numeric" placeholder="PIN eingeben" autocomplete="one-time-code" />
       <button class="btn btn-primary" id="pin-submit">App öffnen</button>
-      <div class="pin-note">Hinweis: Diese Version begrenzt Bewertungen praktisch auf <b>ein Gerät / einen Browser pro Restaurant</b>. Eine echte, sichere Begrenzung pro Person oder IP ist ohne richtigen Login nicht zuverlässig möglich.</div>
+      <div class="pin-note">Normaler PIN: <b>806</b>. Admin-PIN ist separat im Code hinterlegt. Diese Admin-Sperre ist in einer statischen HTML-Datei nur eine App-Sperre, keine harte Serversicherheit.</div>
     </div>
   </div>
 
   <header class="app-header hidden" id="app-header">
     <div class="app-header-inner">
-      <div class="app-title">🍽 Restaurant Rating</div>
-      <div class="app-subtitle">Gemeinsame Bewertungen mit festem Scoring und mobiler Ansicht</div>
+      <div class="header-row">
+        <div>
+          <div class="app-title">🍽 Restaurant Rating</div>
+          <div class="app-subtitle" id="app-subtitle">Gemeinsame Bewertungen mit fester Gewichtung</div>
+        </div>
+        <button class="mode-btn" id="change-mode-btn" type="button">PIN wechseln</button>
+      </div>
     </div>
   </header>
 
@@ -405,22 +158,19 @@
     <section id="screen-rate">
       <div class="card">
         <div class="card-title">✍️ Restaurant bewerten</div>
-        <div class="card-sub">Jedes Gerät kann ein Restaurant genau einmal bewerten. Das Restaurant muss zwingend aus der Google-Auswahl gewählt werden, damit keine Duplikate durch Tippfehler entstehen.</div>
+        <div class="card-sub">Restaurants werden aus deiner vorhandenen Liste ausgewählt. So vermeidest du Dopplungen durch Tippfehler.</div>
 
         <label class="field-label" for="voter-name">Dein Name</label>
         <input id="voter-name" class="text-input" type="text" maxlength="60" placeholder="z. B. Anna" />
 
-        <label class="field-label" for="restaurant-search">Restaurant</label>
-        <input id="restaurant-search" class="text-input" type="text" placeholder="Restaurant über Google suchen" autocomplete="off" />
-        <div class="hint">Tippe den Namen an und wähle dann zwingend einen Google-Treffer aus. Erst dadurch werden Name, Adresse und Maps-Link automatisch übernommen und doppelte Restaurants vermieden.</div>
-
-        <label class="field-label" for="restaurant-address">Adresse</label>
-        <input id="restaurant-address" class="text-input" type="text" placeholder="Adresse oder Ort" />
-
-        <div class="badge-line">
-          <span class="pill" id="selected-place-pill">Bitte Google-Treffer wählen</span>
-          <a class="pill hidden" id="maps-preview-link" target="_blank" rel="noopener noreferrer">In Maps öffnen</a>
+        <label class="field-label" for="restaurant-search">Restaurant suchen</label>
+        <div class="search-wrap">
+          <input id="restaurant-search" class="text-input" type="text" placeholder="z. B. Coyote" autocomplete="off" />
+          <div id="restaurant-suggestions" class="suggestions hidden"></div>
         </div>
+        <div class="status-line" id="restaurant-status">Bitte ein vorhandenes Restaurant aus der Liste auswählen.</div>
+
+        <div class="pill" id="selected-restaurant-pill">Noch kein Restaurant ausgewählt</div>
       </div>
 
       <div class="card">
@@ -437,7 +187,7 @@
     <section id="screen-rank" class="hidden">
       <div class="card">
         <div class="card-title">🏆 Rangliste</div>
-        <div class="card-sub">Durchschnitt aller Bewertungen pro Restaurant.</div>
+        <div class="card-sub">Ø Score und Anzahl Bewertungen pro Restaurant.</div>
         <div id="ranking-list"></div>
       </div>
     </section>
@@ -449,12 +199,31 @@
         <div id="my-ratings-list"></div>
       </div>
     </section>
+
+    <section id="screen-admin" class="hidden">
+      <div class="card">
+        <div class="card-title">🔐 Admin: Restaurant anlegen</div>
+        <div class="card-sub">Nur hier werden neue Restaurants erstellt. Nutzer können anschließend nur noch vorhandene Restaurants bewerten.</div>
+        <label class="field-label" for="admin-name">Restaurantname</label>
+        <input id="admin-name" class="text-input" type="text" placeholder="z. B. Coyote Cafe Saarlouis" />
+        <label class="field-label" for="admin-address">Adresse</label>
+        <input id="admin-address" class="text-input" type="text" placeholder="Adresse" />
+        <label class="field-label" for="admin-maps">Maps-Link (optional)</label>
+        <input id="admin-maps" class="text-input" type="url" placeholder="https://..." />
+        <button class="btn btn-primary" id="admin-save-btn" type="button">Restaurant anlegen</button>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Vorhandene Restaurants</div>
+        <div id="admin-restaurant-list"></div>
+      </div>
+    </section>
   </main>
 
   <nav class="tab-bar hidden" id="tab-bar">
     <button class="tab-btn active" data-screen="rate"><span class="tab-icon">✍️</span>Bewerten</button>
     <button class="tab-btn" data-screen="rank"><span class="tab-icon">🏆</span>Rangliste</button>
     <button class="tab-btn" data-screen="mine"><span class="tab-icon">👤</span>Meine</button>
+    <button class="tab-btn hidden" data-screen="admin" id="admin-tab"><span class="tab-icon">🔐</span>Admin</button>
   </nav>
 
   <div class="toast" id="toast"></div>
@@ -462,9 +231,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const APP_PIN = '806';
+    const ADMIN_PIN = '9806';
     const SUPABASE_URL = 'https://oshrkqtimbkgntbbkxxr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_qKR1ZVGbZBZigEZfoWlmFg_x1oWObV0';
-    const GOOGLE_MAPS_API_KEY = '';
 
     const WEIGHTS = {
       geschmack: 0.214,
@@ -487,13 +256,14 @@
     ];
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const DEVICE_KEY_STORAGE = 'restaurant_app_device_key_v1';
-    const APP_UNLOCK_STORAGE = 'restaurant_app_pin_ok_v1';
-    const NAME_STORAGE = 'restaurant_app_name_v1';
-    
+    const DEVICE_KEY_STORAGE = 'restaurant_app_device_key_v2';
+    const NAME_STORAGE = 'restaurant_app_name_v2';
+
     let currentScreen = 'rate';
-    let selectedPlace = null;
+    let restaurants = [];
+    let selectedRestaurant = null;
     let myRatings = [];
+    let isAdmin = false;
 
     function getDeviceKey() {
       let key = localStorage.getItem(DEVICE_KEY_STORAGE);
@@ -503,8 +273,26 @@
       }
       return key;
     }
-
     const DEVICE_KEY = getDeviceKey();
+
+
+    function lockApp() {
+      isAdmin = false;
+      currentScreen = 'rate';
+      document.getElementById('pin-input').value = '';
+      document.getElementById('pin-overlay').classList.remove('hidden');
+      document.getElementById('app-header').classList.add('hidden');
+      document.getElementById('app-content').classList.add('hidden');
+      document.getElementById('tab-bar').classList.add('hidden');
+      document.getElementById('admin-tab').classList.add('hidden');
+      document.getElementById('screen-admin').classList.add('hidden');
+      document.getElementById('screen-rate').classList.remove('hidden');
+      document.getElementById('screen-rank').classList.add('hidden');
+      document.getElementById('screen-mine').classList.add('hidden');
+      document.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.screen === 'rate'));
+      document.getElementById('app-subtitle').textContent = 'Gemeinsame Bewertungen mit fester Gewichtung';
+      document.getElementById('pin-input').focus();
+    }
 
     function showToast(message, isError = false) {
       const toast = document.getElementById('toast');
@@ -523,269 +311,35 @@
       return '⭐';
     }
 
+    function escapeHtml(value = '') {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+    function escapeAttr(value = '') { return escapeHtml(value); }
+    function escapeJs(value = '') { return String(value).replaceAll('\\', '\\\\').replaceAll("'", "\\'"); }
+
+    function calculateTotal(scores) {
+      const total =
+        scores.geschmack * WEIGHTS.geschmack +
+        scores.preis_leistung * WEIGHTS.preis_leistung +
+        scores.service * WEIGHTS.service +
+        scores.ambiente * WEIGHTS.ambiente +
+        scores.wartezeit * WEIGHTS.wartezeit +
+        scores.portionsgroesse * WEIGHTS.portionsgroesse +
+        scores.speisekarte * WEIGHTS.speisekarte;
+      return Math.round(total * 100) / 100;
+    }
+
     function getScoresFromForm() {
       const scores = {};
       for (const criterion of CRITERIA) {
         scores[criterion.key] = Number(document.getElementById(`score-${criterion.key}`).value);
       }
       return scores;
-    }
-
-    function getMapsUrlFromSelection(name, placeId) {
-      if (placeId) {
-        return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
-      }
-      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
-    }
-
-    function setSelectedPlace(place) {
-      selectedPlace = place;
-      const pill = document.getElementById('selected-place-pill');
-      const mapsLink = document.getElementById('maps-preview-link');
-      document.getElementById('restaurant-search').value = place.name || '';
-      document.getElementById('restaurant-address').value = place.address || '';
-
-      pill.textContent = 'Google-Ort ausgewählt';
-
-      const url = getMapsUrlFromSelection(place.name || '', place.place_id || '');
-      mapsLink.href = url;
-      mapsLink.textContent = 'In Maps öffnen';
-      mapsLink.classList.remove('hidden');
-    }
-    function getSelectedGooglePlace() {
-      if (!selectedPlace || !selectedPlace.place_id) return null;
-      return selectedPlace;
-    }
-
-    function fillFormFromRating(rating) {
-      document.getElementById('voter-name').value = rating.voter_name || '';
-      localStorage.setItem(NAME_STORAGE, rating.voter_name || '');
-      setSelectedPlace({
-        place_id: rating.place_id,
-        name: rating.restaurant_name,
-        address: rating.restaurant_address || '',
-        maps_url: rating.maps_url || getMapsUrlFromSelection(rating.restaurant_name, rating.place_id),
-      });
-
-      for (const criterion of CRITERIA) {
-        const val = Number(rating[criterion.key] ?? 5);
-        const input = document.getElementById(`score-${criterion.key}`);
-        input.value = val;
-        document.getElementById(`display-${criterion.key}`).textContent = val.toFixed(1);
-      }
-
-      switchScreen('rate');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function resetForm() {
-      selectedPlace = null;
-      document.getElementById('restaurant-search').value = '';
-      document.getElementById('restaurant-address').value = '';
-      document.getElementById('selected-place-pill').textContent = 'Bitte Google-Treffer wählen';
-      document.getElementById('maps-preview-link').classList.add('hidden');
-      CRITERIA.forEach((criterion) => {
-        document.getElementById(`score-${criterion.key}`).value = 5;
-        document.getElementById(`display-${criterion.key}`).textContent = '5.0';
-      });
-    }
-
-    function switchScreen(screen) {
-      currentScreen = screen;
-      document.getElementById('screen-rate').classList.toggle('hidden', screen !== 'rate');
-      document.getElementById('screen-rank').classList.toggle('hidden', screen !== 'rank');
-      document.getElementById('screen-mine').classList.toggle('hidden', screen !== 'mine');
-      document.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.screen === screen));
-
-      if (screen === 'rank') loadRanking();
-      if (screen === 'mine') loadMyRatings();
-    }
-
-    async function saveRating() {
-      const voterName = document.getElementById('voter-name').value.trim();
-      const place = getSelectedGooglePlace();
-      if (!voterName) {
-        showToast('Bitte deinen Namen eingeben.', true);
-        return;
-      }
-      if (!place?.name) {
-        showToast('Bitte ein Restaurant aus der Google-Liste auswählen.', true);
-        return;
-      }
-
-      localStorage.setItem(NAME_STORAGE, voterName);
-      const scores = getScoresFromForm();
-
-      const payload = {
-        p_pin: APP_PIN,
-        p_device_key: DEVICE_KEY,
-        p_voter_name: voterName,
-        p_place_id: place.place_id,
-        p_restaurant_name: place.name,
-        p_restaurant_address: place.address || '',
-        p_maps_url: place.maps_url || getMapsUrlFromSelection(place.name, place.place_id),
-        p_geschmack: scores.geschmack,
-        p_preis_leistung: scores.preis_leistung,
-        p_service: scores.service,
-        p_ambiente: scores.ambiente,
-        p_wartezeit: scores.wartezeit,
-        p_portionsgroesse: scores.portionsgroesse,
-        p_speisekarte: scores.speisekarte,
-      };
-
-      const btn = document.getElementById('save-rating-btn');
-      btn.disabled = true;
-      btn.textContent = 'Speichert…';
-
-      try {
-        const { data, error } = await supabaseClient.rpc('upsert_rating', payload);
-        if (error) throw error;
-        showToast(`Gespeichert: ${data?.restaurant_name || place.name}`);
-        await Promise.all([loadRanking(), loadMyRatings()]);
-        switchScreen('rank');
-      } catch (err) {
-        console.error(err);
-        showToast(err.message || 'Speichern fehlgeschlagen.', true);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Bewertung speichern';
-      }
-    }
-
-    async function deleteRating(placeId) {
-      if (!confirm('Deine Bewertung für dieses Restaurant wirklich löschen?')) return;
-      try {
-        const { error } = await supabaseClient.rpc('delete_own_rating', {
-          p_pin: APP_PIN,
-          p_device_key: DEVICE_KEY,
-          p_place_id: placeId,
-        });
-        if (error) throw error;
-        showToast('Bewertung gelöscht.');
-        await Promise.all([loadRanking(), loadMyRatings()]);
-      } catch (err) {
-        console.error(err);
-        showToast(err.message || 'Löschen fehlgeschlagen.', true);
-      }
-    }
-
-    async function loadRanking() {
-      const list = document.getElementById('ranking-list');
-      list.innerHTML = '<div class="empty">Lade Rangliste…</div>';
-      try {
-        const { data, error } = await supabaseClient
-          .from('restaurant_averages')
-          .select('*')
-          .order('avg_total', { ascending: false })
-          .order('ratings_count', { ascending: false });
-        if (error) throw error;
-
-        if (!data || !data.length) {
-          list.innerHTML = '<div class="empty">Noch keine Bewertungen vorhanden.</div>';
-          return;
-        }
-
-        list.innerHTML = data.map((row, index) => `
-          <div class="restaurant-card">
-            <div class="restaurant-top">
-              <div>
-                <div class="restaurant-name">${index + 1}. ${escapeHtml(row.restaurant_name)}</div>
-                <div class="restaurant-address">${escapeHtml(row.restaurant_address || 'Keine Adresse hinterlegt')}</div>
-              </div>
-              <div class="avg-box">
-                <div class="avg-score">${Number(row.avg_total).toFixed(2)}</div>
-                <div class="avg-meta">${stars(Number(row.avg_total))}<br>${row.ratings_count} Bewertung${row.ratings_count === 1 ? '' : 'en'}</div>
-              </div>
-            </div>
-            <div class="actions">
-              ${row.maps_url ? `<a class="mini-btn" target="_blank" rel="noopener noreferrer" href="${escapeAttr(row.maps_url)}">📍 Maps</a>` : ''}
-              <span class="mini-btn">🍽 Geschmack Ø ${Number(row.avg_geschmack).toFixed(1)}</span>
-              <span class="mini-btn">💶 Preis Ø ${Number(row.avg_preis_leistung).toFixed(1)}</span>
-            </div>
-          </div>
-        `).join('');
-      } catch (err) {
-        console.error(err);
-        list.innerHTML = '<div class="empty">Rangliste konnte nicht geladen werden.</div>';
-      }
-    }
-
-    async function loadMyRatings() {
-      const list = document.getElementById('my-ratings-list');
-      list.innerHTML = '<div class="empty">Lade deine Bewertungen…</div>';
-      try {
-        const { data, error } = await supabaseClient.rpc('get_my_ratings', {
-          p_pin: APP_PIN,
-          p_device_key: DEVICE_KEY,
-        });
-        if (error) throw error;
-        myRatings = data || [];
-
-        if (!myRatings.length) {
-          list.innerHTML = '<div class="empty">Du hast auf diesem Gerät noch nichts bewertet.</div>';
-          return;
-        }
-
-        list.innerHTML = myRatings.map((row) => `
-          <div class="restaurant-card">
-            <div class="restaurant-top">
-              <div>
-                <div class="restaurant-name">${escapeHtml(row.restaurant_name)}</div>
-                <div class="restaurant-address">${escapeHtml(row.restaurant_address || 'Keine Adresse hinterlegt')}</div>
-              </div>
-              <div class="avg-box">
-                <div class="avg-score">${Number(row.total).toFixed(2)}</div>
-                <div class="avg-meta">Dein Score</div>
-              </div>
-            </div>
-            <div class="actions">
-              <button class="mini-btn" type="button" onclick="editMyRating('${escapeJs(row.place_id)}')">✏️ Bearbeiten</button>
-              <button class="mini-btn" type="button" onclick="deleteRating('${escapeJs(row.place_id)}')">🗑 Löschen</button>
-              ${row.maps_url ? `<a class="mini-btn" target="_blank" rel="noopener noreferrer" href="${escapeAttr(row.maps_url)}">📍 Maps</a>` : ''}
-            </div>
-          </div>
-        `).join('');
-      } catch (err) {
-        console.error(err);
-        list.innerHTML = '<div class="empty">Deine Bewertungen konnten nicht geladen werden.</div>';
-      }
-    }
-
-    window.editMyRating = function(placeId) {
-      const rating = myRatings.find((item) => item.place_id === placeId);
-      if (!rating) return;
-      fillFormFromRating(rating);
-      showToast('Bewertung zum Bearbeiten geladen.');
-    }
-
-    function loadGoogleMaps() {
-      if (!GOOGLE_MAPS_API_KEY) {
-        document.getElementById('selected-place-pill').textContent = 'Google API Key fehlt';
-        return;
-      }
-      window.initGooglePlaces = () => {
-        const input = document.getElementById('restaurant-search');
-        const autocomplete = new google.maps.places.Autocomplete(input, {
-          fields: ['name', 'place_id', 'formatted_address'],
-          types: ['establishment'],
-        });
-
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
-          if (!place || !place.place_id || !place.name) return;
-          setSelectedPlace({
-            place_id: place.place_id,
-            name: place.name,
-            address: place.formatted_address || '',
-            maps_url: getMapsUrlFromSelection(place.name, place.place_id),
-          });
-        });
-      };
-
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&libraries=places&callback=initGooglePlaces`;
-      script.async = true;
-      document.head.appendChild(script);
     }
 
     function renderCriteria() {
@@ -806,62 +360,391 @@
       `).join('');
     }
 
-    function escapeHtml(value = '') {
-      return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+    async function loadRestaurants() {
+      const { data, error } = await supabaseClient
+        .from('restaurants')
+        .select('id,name,address,maps_url')
+        .order('name', { ascending: true });
+      if (error) throw error;
+      restaurants = data || [];
+      renderAdminRestaurantList();
     }
-    function escapeAttr(value = '') { return escapeHtml(value); }
-    function escapeJs(value = '') { return String(value).replaceAll('\\', '\\\\').replaceAll("'", "\\'"); }
+
+    function renderSuggestions(query = '') {
+      const box = document.getElementById('restaurant-suggestions');
+      const q = query.trim().toLowerCase();
+      if (!q) {
+        box.classList.add('hidden');
+        box.innerHTML = '';
+        return;
+      }
+
+      const matches = restaurants.filter((r) =>
+        r.name.toLowerCase().includes(q) ||
+        (r.address || '').toLowerCase().includes(q)
+      ).slice(0, 8);
+
+      if (!matches.length) {
+        box.innerHTML = '<div class="suggestion-item"><strong>Kein Treffer</strong><span>Nur vorhandene Restaurants sind auswählbar.</span></div>';
+        box.classList.remove('hidden');
+        return;
+      }
+
+      box.innerHTML = matches.map((r) => `
+        <div class="suggestion-item" onclick="selectRestaurant('${escapeJs(r.id)}')">
+          <strong>${escapeHtml(r.name)}</strong>
+          <span>${escapeHtml(r.address || 'Keine Adresse')}</span>
+        </div>
+      `).join('');
+      box.classList.remove('hidden');
+    }
+
+    window.selectRestaurant = function(id) {
+      selectedRestaurant = restaurants.find((r) => r.id === id) || null;
+      document.getElementById('restaurant-search').value = selectedRestaurant?.name || '';
+      document.getElementById('restaurant-suggestions').classList.add('hidden');
+      document.getElementById('restaurant-suggestions').innerHTML = '';
+      document.getElementById('selected-restaurant-pill').textContent = selectedRestaurant
+        ? `${selectedRestaurant.name}${selectedRestaurant.address ? ' · ' + selectedRestaurant.address : ''}`
+        : 'Noch kein Restaurant ausgewählt';
+      document.getElementById('restaurant-status').textContent = selectedRestaurant
+        ? 'Restaurant ausgewählt.'
+        : 'Bitte ein vorhandenes Restaurant aus der Liste auswählen.';
+    }
+
+    function resetForm() {
+      selectedRestaurant = null;
+      document.getElementById('restaurant-search').value = '';
+      document.getElementById('selected-restaurant-pill').textContent = 'Noch kein Restaurant ausgewählt';
+      document.getElementById('restaurant-status').textContent = 'Bitte ein vorhandenes Restaurant aus der Liste auswählen.';
+      document.getElementById('restaurant-suggestions').classList.add('hidden');
+      document.getElementById('restaurant-suggestions').innerHTML = '';
+      CRITERIA.forEach((criterion) => {
+        document.getElementById(`score-${criterion.key}`).value = 5;
+        document.getElementById(`display-${criterion.key}`).textContent = '5.0';
+      });
+    }
+
+    function switchScreen(screen) {
+      currentScreen = screen;
+      ['rate','rank','mine','admin'].forEach((name) => {
+        document.getElementById(`screen-${name}`).classList.toggle('hidden', name !== screen);
+      });
+      document.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.screen === screen));
+      if (screen === 'rank') loadRanking();
+      if (screen === 'mine') loadMyRatings();
+      if (screen === 'admin' && isAdmin) renderAdminRestaurantList();
+    }
+
+    async function saveRating() {
+      const voterName = document.getElementById('voter-name').value.trim();
+      if (!voterName) return showToast('Bitte deinen Namen eingeben.', true);
+      if (!selectedRestaurant?.id) return showToast('Bitte ein vorhandenes Restaurant auswählen.', true);
+      localStorage.setItem(NAME_STORAGE, voterName);
+      const scores = getScoresFromForm();
+      const payload = {
+        restaurant_id: selectedRestaurant.id,
+        device_key: DEVICE_KEY,
+        voter_name: voterName,
+        geschmack: scores.geschmack,
+        preis_leistung: scores.preis_leistung,
+        service: scores.service,
+        ambiente: scores.ambiente,
+        wartezeit: scores.wartezeit,
+        portionsgroesse: scores.portionsgroesse,
+        speisekarte: scores.speisekarte,
+        total: calculateTotal(scores),
+      };
+
+      const btn = document.getElementById('save-rating-btn');
+      btn.disabled = true;
+      btn.textContent = 'Speichert…';
+      try {
+        const { error } = await supabaseClient.from('ratings').upsert(payload, { onConflict: 'restaurant_id,device_key' });
+        if (error) throw error;
+        showToast(`Gespeichert: ${selectedRestaurant.name}`);
+        await Promise.all([loadRanking(), loadMyRatings()]);
+        switchScreen('rank');
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'Speichern fehlgeschlagen.', true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Bewertung speichern';
+      }
+    }
+
+    async function deleteRating(restaurantId) {
+      if (!confirm('Deine Bewertung für dieses Restaurant wirklich löschen?')) return;
+      try {
+        const { error } = await supabaseClient
+          .from('ratings')
+          .delete()
+          .eq('restaurant_id', restaurantId)
+          .eq('device_key', DEVICE_KEY);
+        if (error) throw error;
+        showToast('Bewertung gelöscht.');
+        await Promise.all([loadRanking(), loadMyRatings()]);
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'Löschen fehlgeschlagen.', true);
+      }
+    }
+
+    async function loadRanking() {
+      const list = document.getElementById('ranking-list');
+      list.innerHTML = '<div class="empty">Lade Rangliste…</div>';
+      try {
+        const [{ data: restaurantsData, error: restaurantsError }, { data: ratingsData, error: ratingsError }] = await Promise.all([
+          supabaseClient.from('restaurants').select('id,name,address,maps_url').order('name'),
+          supabaseClient.from('ratings').select('restaurant_id,total,geschmack,preis_leistung,service,ambiente,wartezeit,portionsgroesse,speisekarte')
+        ]);
+        if (restaurantsError) throw restaurantsError;
+        if (ratingsError) throw ratingsError;
+
+        const grouped = new Map();
+        for (const r of restaurantsData || []) {
+          grouped.set(r.id, { restaurant: r, ratings: [] });
+        }
+        for (const rating of ratingsData || []) {
+          if (grouped.has(rating.restaurant_id)) grouped.get(rating.restaurant_id).ratings.push(rating);
+        }
+
+        const rows = Array.from(grouped.values())
+          .filter((x) => x.ratings.length)
+          .map(({ restaurant, ratings }) => {
+            const sum = (key) => ratings.reduce((acc, r) => acc + Number(r[key] || 0), 0);
+            const count = ratings.length;
+            return {
+              restaurant,
+              avg_total: sum('total') / count,
+              avg_geschmack: sum('geschmack') / count,
+              avg_preis_leistung: sum('preis_leistung') / count,
+              ratings_count: count,
+            };
+          })
+          .sort((a, b) => b.avg_total - a.avg_total || b.ratings_count - a.ratings_count || a.restaurant.name.localeCompare(b.restaurant.name));
+
+        if (!rows.length) {
+          list.innerHTML = '<div class="empty">Noch keine Bewertungen vorhanden.</div>';
+          return;
+        }
+
+        list.innerHTML = rows.map((row, index) => `
+          <div class="restaurant-card">
+            <div class="restaurant-top">
+              <div>
+                <div class="restaurant-name">${index + 1}. ${escapeHtml(row.restaurant.name)}</div>
+                <div class="restaurant-address">${escapeHtml(row.restaurant.address || 'Keine Adresse hinterlegt')}</div>
+              </div>
+              <div class="avg-box">
+                <div class="avg-score">${Number(row.avg_total).toFixed(2)}</div>
+                <div class="avg-meta">${stars(Number(row.avg_total))}<br>(${row.ratings_count} Bewertung${row.ratings_count === 1 ? '' : 'en'})</div>
+              </div>
+            </div>
+            <div class="actions">
+              ${row.restaurant.maps_url ? `<a class="mini-btn" target="_blank" rel="noopener noreferrer" href="${escapeAttr(row.restaurant.maps_url)}">📍 Maps</a>` : ''}
+              <span class="mini-btn">🍽 Ø ${Number(row.avg_geschmack).toFixed(1)}</span>
+              <span class="mini-btn">💶 Ø ${Number(row.avg_preis_leistung).toFixed(1)}</span>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        list.innerHTML = '<div class="empty">Rangliste konnte nicht geladen werden.</div>';
+      }
+    }
+
+    async function loadMyRatings() {
+      const list = document.getElementById('my-ratings-list');
+      list.innerHTML = '<div class="empty">Lade deine Bewertungen…</div>';
+      try {
+        const [{ data: ratingsData, error: ratingsError }, { data: restaurantsData, error: restaurantsError }] = await Promise.all([
+          supabaseClient.from('ratings').select('*').eq('device_key', DEVICE_KEY),
+          supabaseClient.from('restaurants').select('id,name,address,maps_url')
+        ]);
+        if (ratingsError) throw ratingsError;
+        if (restaurantsError) throw restaurantsError;
+
+        const restaurantMap = new Map((restaurantsData || []).map((r) => [r.id, r]));
+        myRatings = (ratingsData || []).map((r) => ({ ...r, restaurant: restaurantMap.get(r.restaurant_id) || null }));
+
+        if (!myRatings.length) {
+          list.innerHTML = '<div class="empty">Du hast auf diesem Gerät noch nichts bewertet.</div>';
+          return;
+        }
+
+        list.innerHTML = myRatings.map((row) => `
+          <div class="restaurant-card">
+            <div class="restaurant-top">
+              <div>
+                <div class="restaurant-name">${escapeHtml(row.restaurant?.name || 'Unbekanntes Restaurant')}</div>
+                <div class="restaurant-address">${escapeHtml(row.restaurant?.address || 'Keine Adresse hinterlegt')}</div>
+              </div>
+              <div class="avg-box">
+                <div class="avg-score">${Number(row.total).toFixed(2)}</div>
+                <div class="avg-meta">Dein Score</div>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="mini-btn" type="button" onclick="editMyRating('${escapeJs(row.restaurant_id)}')">✏️ Bearbeiten</button>
+              <button class="mini-btn" type="button" onclick="deleteRating('${escapeJs(row.restaurant_id)}')">🗑 Löschen</button>
+              ${row.restaurant?.maps_url ? `<a class="mini-btn" target="_blank" rel="noopener noreferrer" href="${escapeAttr(row.restaurant.maps_url)}">📍 Maps</a>` : ''}
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        list.innerHTML = '<div class="empty">Deine Bewertungen konnten nicht geladen werden.</div>';
+      }
+    }
+
+    window.editMyRating = function(restaurantId) {
+      const rating = myRatings.find((item) => item.restaurant_id === restaurantId);
+      if (!rating || !rating.restaurant) return;
+      document.getElementById('voter-name').value = rating.voter_name || '';
+      localStorage.setItem(NAME_STORAGE, rating.voter_name || '');
+      selectRestaurant(restaurantId);
+      for (const criterion of CRITERIA) {
+        const val = Number(rating[criterion.key] ?? 5);
+        document.getElementById(`score-${criterion.key}`).value = val;
+        document.getElementById(`display-${criterion.key}`).textContent = val.toFixed(1);
+      }
+      switchScreen('rate');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showToast('Bewertung zum Bearbeiten geladen.');
+    }
+
+    window.deleteRating = deleteRating;
+
+    async function saveRestaurant() {
+      if (!isAdmin) return showToast('Nur im Admin-Modus möglich.', true);
+      const name = document.getElementById('admin-name').value.trim();
+      const address = document.getElementById('admin-address').value.trim();
+      const mapsUrl = document.getElementById('admin-maps').value.trim();
+      if (!name) return showToast('Bitte einen Restaurantnamen eingeben.', true);
+
+      const btn = document.getElementById('admin-save-btn');
+      btn.disabled = true;
+      btn.textContent = 'Speichert…';
+      try {
+        const { error } = await supabaseClient.from('restaurants').insert({
+          name,
+          address,
+          maps_url: mapsUrl || null,
+        });
+        if (error) throw error;
+        document.getElementById('admin-name').value = '';
+        document.getElementById('admin-address').value = '';
+        document.getElementById('admin-maps').value = '';
+        showToast('Restaurant angelegt.');
+        await loadRestaurants();
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'Restaurant konnte nicht angelegt werden.', true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Restaurant anlegen';
+      }
+    }
+
+    async function deleteRestaurant(id) {
+      if (!isAdmin) return showToast('Nur im Admin-Modus möglich.', true);
+      if (!confirm('Restaurant und alle zugehörigen Bewertungen löschen?')) return;
+      try {
+        const { error } = await supabaseClient.from('restaurants').delete().eq('id', id);
+        if (error) throw error;
+        showToast('Restaurant gelöscht.');
+        await Promise.all([loadRestaurants(), loadRanking(), loadMyRatings()]);
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'Löschen fehlgeschlagen.', true);
+      }
+    }
+    window.deleteRestaurant = deleteRestaurant;
+
+    function renderAdminRestaurantList() {
+      const list = document.getElementById('admin-restaurant-list');
+      if (!restaurants.length) {
+        list.innerHTML = '<div class="empty">Noch keine Restaurants angelegt.</div>';
+        return;
+      }
+      list.innerHTML = restaurants.map((r) => `
+        <div class="restaurant-card">
+          <div class="restaurant-top">
+            <div>
+              <div class="restaurant-name">${escapeHtml(r.name)}</div>
+              <div class="restaurant-address">${escapeHtml(r.address || 'Keine Adresse')}</div>
+            </div>
+          </div>
+          <div class="actions">
+            ${r.maps_url ? `<a class="mini-btn" href="${escapeAttr(r.maps_url)}" target="_blank" rel="noopener noreferrer">📍 Maps</a>` : ''}
+            <button class="mini-btn" type="button" onclick="deleteRestaurant('${escapeJs(r.id)}')">🗑 Löschen</button>
+          </div>
+        </div>
+      `).join('');
+    }
 
     function bindEvents() {
       document.getElementById('save-rating-btn').addEventListener('click', saveRating);
       document.getElementById('reset-form-btn').addEventListener('click', resetForm);
       document.getElementById('pin-submit').addEventListener('click', unlockApp);
-      document.getElementById('pin-input').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') unlockApp();
+      document.getElementById('pin-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') unlockApp(); });
+      document.getElementById('restaurant-search').addEventListener('input', (e) => {
+        const raw = e.target.value;
+        selectedRestaurant = null;
+        document.getElementById('selected-restaurant-pill').textContent = 'Noch kein Restaurant ausgewählt';
+        document.getElementById('restaurant-status').textContent = raw.trim()
+          ? 'Bitte einen vorhandenen Treffer anklicken.'
+          : 'Bitte ein vorhandenes Restaurant aus der Liste auswählen.';
+        renderSuggestions(raw);
       });
-      document.getElementById('restaurant-search').addEventListener('input', () => {
-        selectedPlace = null;
-        document.getElementById('selected-place-pill').textContent = 'Bitte Google-Treffer wählen';
-        document.getElementById('maps-preview-link').classList.add('hidden');
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-wrap')) {
+          document.getElementById('restaurant-suggestions').classList.add('hidden');
+        }
       });
       document.querySelectorAll('.tab-btn').forEach((btn) => {
-        btn.addEventListener('click', () => switchScreen(btn.dataset.screen));
+        btn.addEventListener('click', () => {
+          if (btn.dataset.screen === 'admin' && !isAdmin) return;
+          switchScreen(btn.dataset.screen);
+        });
       });
+      document.getElementById('admin-save-btn').addEventListener('click', saveRestaurant);
+      document.getElementById('change-mode-btn').addEventListener('click', lockApp);
     }
 
-    function unlockApp() {
+    async function unlockApp() {
       const input = document.getElementById('pin-input').value.trim();
-      if (input !== APP_PIN) {
+      if (input !== APP_PIN && input !== ADMIN_PIN) {
         showToast('Falscher PIN.', true);
         return;
       }
-      localStorage.setItem(APP_UNLOCK_STORAGE, '1');
+      isAdmin = input === ADMIN_PIN;
       document.getElementById('pin-overlay').classList.add('hidden');
       document.getElementById('app-header').classList.remove('hidden');
       document.getElementById('app-content').classList.remove('hidden');
       document.getElementById('tab-bar').classList.remove('hidden');
       document.getElementById('voter-name').value = localStorage.getItem(NAME_STORAGE) || '';
-      loadRanking();
-      loadMyRatings();
+      document.getElementById('app-subtitle').textContent = isAdmin
+        ? 'Admin-Modus aktiv · Restaurants anlegen und Bewertungen verwalten'
+        : 'Gemeinsame Bewertungen mit fester Gewichtung';
+      document.getElementById('admin-tab').classList.toggle('hidden', !isAdmin);
+      if (!isAdmin && currentScreen === 'admin') currentScreen = 'rate';
+      try {
+        await loadRestaurants();
+        await Promise.all([loadRanking(), loadMyRatings()]);
+        switchScreen('rate');
+      } catch (err) {
+        console.error(err);
+        showToast('Daten konnten nicht geladen werden. Prüfe die Supabase-Tabellen.', true);
+      }
     }
 
     function init() {
       renderCriteria();
       bindEvents();
-      loadGoogleMaps();
-      if (!GOOGLE_MAPS_API_KEY) {
-        document.getElementById('save-rating-btn').disabled = true;
-        document.getElementById('save-rating-btn').textContent = 'Google Key fehlt';
-      }
-      if (localStorage.getItem(APP_UNLOCK_STORAGE) === '1') {
-        document.getElementById('pin-input').value = APP_PIN;
-        unlockApp();
-      }
+      lockApp();
     }
 
     init();
