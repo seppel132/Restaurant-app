@@ -492,7 +492,7 @@
     // ===============================
     // STATE
     // ===============================
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const DEVICE_KEY_STORAGE = 'restaurant_app_device_key_v1';
     const APP_UNLOCK_STORAGE = 'restaurant_app_pin_ok_v1';
     const NAME_STORAGE = 'restaurant_app_name_v1';
@@ -680,7 +680,7 @@
       btn.textContent = 'Speichert…';
 
       try {
-        const { data, error } = await supabase.rpc('upsert_rating', payload);
+        const { data, error } = await supabaseClient.rpc('upsert_rating', payload);
         if (error) throw error;
         showToast(`Gespeichert: ${data?.restaurant_name || place.name}`);
         await Promise.all([loadRanking(), loadMyRatings()]);
@@ -697,7 +697,7 @@
     async function deleteRating(placeId) {
       if (!confirm('Deine Bewertung für dieses Restaurant wirklich löschen?')) return;
       try {
-        const { error } = await supabase.rpc('delete_own_rating', {
+        const { error } = await supabaseClient.rpc('delete_own_rating', {
           p_pin: APP_PIN,
           p_device_key: DEVICE_KEY,
           p_place_id: placeId,
@@ -715,7 +715,7 @@
       const list = document.getElementById('ranking-list');
       list.innerHTML = '<div class="empty">Lade Rangliste…</div>';
       try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from('restaurant_averages')
           .select('*')
           .order('avg_total', { ascending: false })
@@ -756,7 +756,7 @@
       const list = document.getElementById('my-ratings-list');
       list.innerHTML = '<div class="empty">Lade deine Bewertungen…</div>';
       try {
-        const { data, error } = await supabase.rpc('get_my_ratings', {
+        const { data, error } = await supabaseClient.rpc('get_my_ratings', {
           p_pin: APP_PIN,
           p_device_key: DEVICE_KEY,
         });
