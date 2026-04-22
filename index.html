@@ -125,6 +125,33 @@
     .suggestion-item strong { display: block; font-size: 14px; }
     .suggestion-item span { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
     .status-line { margin-top: -4px; margin-bottom: 12px; font-size: 12px; color: var(--muted); }
+
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(26,10,0,.58); z-index: 120;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-sheet {
+      width: 100%; max-width: 760px; max-height: 86dvh; overflow-y: auto;
+      background: var(--paper); border-radius: 24px 24px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 30px rgba(0,0,0,.18);
+    }
+    .modal-handle { width: 46px; height: 5px; border-radius: 999px; background: var(--border); margin: 0 auto 14px; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; margin: 0; }
+    .modal-sub { color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.45; }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 16px; }
+    .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+    .metric-label { color: var(--muted); font-size: 12px; }
+    .metric-value { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); margin-top: 2px; }
+    .review-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-top: 12px; }
+    .review-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .review-name { font-weight: 700; font-size: 14px; }
+    .review-meta { color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.4; }
+    .review-score { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); }
+    .crit-list { margin-top: 10px; display:grid; gap:6px; }
+    .crit-line { display:flex; justify-content:space-between; gap:10px; font-size: 12px; }
+    .modal-close { margin-top: 16px; }
+
     @media (min-width: 780px) {
       .content { max-width: 760px; width: 100%; margin: 0 auto; }
       .app-header-inner { max-width: 760px; margin: 0 auto; }
@@ -171,6 +198,13 @@
         <div class="status-line" id="restaurant-status">Bitte ein vorhandenes Restaurant aus der Liste auswählen.</div>
 
         <div class="pill" id="selected-restaurant-pill">Noch kein Restaurant ausgewählt</div>
+
+        <label class="field-label" for="visit-date" style="margin-top:14px;">Besuchsdatum</label>
+        <input id="visit-date" class="text-input" type="date" />
+
+        <label class="field-label" for="rating-note">Anmerkung (optional)</label>
+        <textarea id="rating-note" class="text-area" rows="4" maxlength="1000" placeholder="z. B. sehr guter Burger, Service freundlich, Terrasse angenehm"></textarea>
+        <div class="hint">Datum und Anmerkung sind nur Zusatzinfos und fließen nicht in den Score ein.</div>
       </div>
 
       <div class="card">
@@ -226,6 +260,16 @@
     <button class="tab-btn hidden" data-screen="admin" id="admin-tab"><span class="tab-icon">🔐</span>Admin</button>
   </nav>
 
+
+
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div id="detail-modal-content"></div>
+      <button class="btn btn-secondary modal-close" id="detail-modal-close" type="button">Schließen</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -264,6 +308,7 @@
     let selectedRestaurant = null;
     let myRatings = [];
     let isAdmin = false;
+    let rankingRows = [];
 
     function getDeviceKey() {
       let key = localStorage.getItem(DEVICE_KEY_STORAGE);
@@ -340,6 +385,13 @@
         scores[criterion.key] = Number(document.getElementById(`score-${criterion.key}`).value);
       }
       return scores;
+    }
+
+    function formatVisitDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString('de-DE');
     }
 
     function renderCriteria() {
@@ -419,6 +471,8 @@
       document.getElementById('restaurant-status').textContent = 'Bitte ein vorhandenes Restaurant aus der Liste auswählen.';
       document.getElementById('restaurant-suggestions').classList.add('hidden');
       document.getElementById('restaurant-suggestions').innerHTML = '';
+      document.getElementById('visit-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('rating-note').value = '';
       CRITERIA.forEach((criterion) => {
         document.getElementById(`score-${criterion.key}`).value = 5;
         document.getElementById(`display-${criterion.key}`).textContent = '5.0';
@@ -441,11 +495,15 @@
       if (!voterName) return showToast('Bitte deinen Namen eingeben.', true);
       if (!selectedRestaurant?.id) return showToast('Bitte ein vorhandenes Restaurant auswählen.', true);
       localStorage.setItem(NAME_STORAGE, voterName);
+      const visitDate = document.getElementById('visit-date').value || null;
+      const note = document.getElementById('rating-note').value.trim() || null;
       const scores = getScoresFromForm();
       const payload = {
         restaurant_id: selectedRestaurant.id,
         device_key: DEVICE_KEY,
         voter_name: voterName,
+        visit_date: visitDate,
+        note,
         geschmack: scores.geschmack,
         preis_leistung: scores.preis_leistung,
         service: scores.service,
@@ -497,7 +555,7 @@
       try {
         const [{ data: restaurantsData, error: restaurantsError }, { data: ratingsData, error: ratingsError }] = await Promise.all([
           supabaseClient.from('restaurants').select('id,name,address,maps_url').order('name'),
-          supabaseClient.from('ratings').select('restaurant_id,total,geschmack,preis_leistung,service,ambiente,wartezeit,portionsgroesse,speisekarte')
+          supabaseClient.from('ratings').select('restaurant_id,total,geschmack,preis_leistung,service,ambiente,wartezeit,portionsgroesse,speisekarte,visit_date,note,voter_name')
         ]);
         if (restaurantsError) throw restaurantsError;
         if (ratingsError) throw ratingsError;
@@ -517,13 +575,21 @@
             const count = ratings.length;
             return {
               restaurant,
+              ratings,
               avg_total: sum('total') / count,
               avg_geschmack: sum('geschmack') / count,
               avg_preis_leistung: sum('preis_leistung') / count,
+              avg_service: sum('service') / count,
+              avg_ambiente: sum('ambiente') / count,
+              avg_wartezeit: sum('wartezeit') / count,
+              avg_portionsgroesse: sum('portionsgroesse') / count,
+              avg_speisekarte: sum('speisekarte') / count,
               ratings_count: count,
             };
           })
           .sort((a, b) => b.avg_total - a.avg_total || b.ratings_count - a.ratings_count || a.restaurant.name.localeCompare(b.restaurant.name));
+
+        rankingRows = rows;
 
         if (!rows.length) {
           list.innerHTML = '<div class="empty">Noch keine Bewertungen vorhanden.</div>';
@@ -544,8 +610,8 @@
             </div>
             <div class="actions">
               ${row.restaurant.maps_url ? `<a class="mini-btn" target="_blank" rel="noopener noreferrer" href="${escapeAttr(row.restaurant.maps_url)}">📍 Maps</a>` : ''}
-              <span class="mini-btn">🍽 Ø ${Number(row.avg_geschmack).toFixed(1)}</span>
-              <span class="mini-btn">💶 Ø ${Number(row.avg_preis_leistung).toFixed(1)}</span>
+              <button class="mini-btn" type="button" onclick="openAverages('${escapeJs(row.restaurant.id)}')">📊 Ø-Werte</button>
+              <button class="mini-btn" type="button" onclick="openReviews('${escapeJs(row.restaurant.id)}')">📝 Rezensionen</button>
             </div>
           </div>
         `).join('');
@@ -586,6 +652,7 @@
                 <div class="avg-meta">Dein Score</div>
               </div>
             </div>
+            ${(row.visit_date || row.note) ? `<div class="restaurant-address" style="margin-top:10px;">${row.visit_date ? `Besucht am: ${escapeHtml(formatVisitDate(row.visit_date))}` : ''}${row.visit_date && row.note ? '<br>' : ''}${row.note ? `Notiz: ${escapeHtml(row.note)}` : ''}</div>` : ''}
             <div class="actions">
               <button class="mini-btn" type="button" onclick="editMyRating('${escapeJs(row.restaurant_id)}')">✏️ Bearbeiten</button>
               <button class="mini-btn" type="button" onclick="deleteRating('${escapeJs(row.restaurant_id)}')">🗑 Löschen</button>
@@ -603,6 +670,8 @@
       const rating = myRatings.find((item) => item.restaurant_id === restaurantId);
       if (!rating || !rating.restaurant) return;
       document.getElementById('voter-name').value = rating.voter_name || '';
+      document.getElementById('visit-date').value = rating.visit_date || '';
+      document.getElementById('rating-note').value = rating.note || '';
       localStorage.setItem(NAME_STORAGE, rating.voter_name || '');
       selectRestaurant(restaurantId);
       for (const criterion of CRITERIA) {
@@ -616,6 +685,77 @@
     }
 
     window.deleteRating = deleteRating;
+
+
+    function closeDetailModal() {
+      document.getElementById('detail-modal').classList.remove('open');
+      document.getElementById('detail-modal-content').innerHTML = '';
+    }
+
+    function getRankingRow(restaurantId) {
+      return rankingRows.find((row) => row.restaurant.id === restaurantId) || null;
+    }
+
+    window.openAverages = function(restaurantId) {
+      const row = getRankingRow(restaurantId);
+      if (!row) return showToast('Details konnten nicht geladen werden.', true);
+      const metrics = [
+        ['Gesamtscore Ø', row.avg_total],
+        ['Geschmack Ø', row.avg_geschmack],
+        ['Preis/Leistung Ø', row.avg_preis_leistung],
+        ['Service Ø', row.avg_service],
+        ['Ambiente Ø', row.avg_ambiente],
+        ['Wartezeit Ø', row.avg_wartezeit],
+        ['Portionsgröße Ø', row.avg_portionsgroesse],
+        ['Speisekarte Ø', row.avg_speisekarte],
+      ];
+      document.getElementById('detail-modal-content').innerHTML = `
+        <h3 class="modal-title">${escapeHtml(row.restaurant.name)}</h3>
+        <div class="modal-sub">Durchschnittswerte aus ${row.ratings_count} Bewertung${row.ratings_count === 1 ? '' : 'en'}.</div>
+        <div class="metric-grid">
+          ${metrics.map(([label, value]) => `
+            <div class="metric-card">
+              <div class="metric-label">${label}</div>
+              <div class="metric-value">${Number(value).toFixed(2)}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      document.getElementById('detail-modal').classList.add('open');
+    }
+
+    window.openReviews = function(restaurantId) {
+      const row = getRankingRow(restaurantId);
+      if (!row) return showToast('Details konnten nicht geladen werden.', true);
+      const reviewsHtml = row.ratings
+        .slice()
+        .sort((a, b) => new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0))
+        .map((rating) => `
+          <div class="review-card">
+            <div class="review-top">
+              <div>
+                <div class="review-name">${escapeHtml(rating.voter_name || 'Unbekannt')}</div>
+                <div class="review-meta">
+                  ${rating.visit_date ? `Besucht am: ${escapeHtml(formatVisitDate(rating.visit_date))}<br>` : ''}
+                  ${rating.note ? `Notiz: ${escapeHtml(rating.note)}` : 'Keine Anmerkung'}
+                </div>
+              </div>
+              <div class="review-score">${Number(rating.total).toFixed(2)}</div>
+            </div>
+            <div class="crit-list">
+              ${CRITERIA.map((criterion) => `
+                <div class="crit-line"><span>${criterion.name}</span><strong>${Number(rating[criterion.key] || 0).toFixed(1)}</strong></div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      document.getElementById('detail-modal-content').innerHTML = `
+        <h3 class="modal-title">${escapeHtml(row.restaurant.name)}</h3>
+        <div class="modal-sub">Alle Rezensionen zu diesem Restaurant. Gesamt: ${row.ratings_count} Bewertung${row.ratings_count === 1 ? '' : 'en'}.</div>
+        ${reviewsHtml || '<div class="empty">Noch keine Rezensionen vorhanden.</div>'}
+      `;
+      document.getElementById('detail-modal').classList.add('open');
+    }
 
     async function saveRestaurant() {
       if (!isAdmin) return showToast('Nur im Admin-Modus möglich.', true);
@@ -712,6 +852,10 @@
       });
       document.getElementById('admin-save-btn').addEventListener('click', saveRestaurant);
       document.getElementById('change-mode-btn').addEventListener('click', lockApp);
+      document.getElementById('detail-modal-close').addEventListener('click', closeDetailModal);
+      document.getElementById('detail-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'detail-modal') closeDetailModal();
+      });
     }
 
     async function unlockApp() {
@@ -744,6 +888,7 @@
     function init() {
       renderCriteria();
       bindEvents();
+      document.getElementById('visit-date').value = new Date().toISOString().split('T')[0];
       lockApp();
     }
 
@@ -751,3 +896,4 @@
   </script>
 </body>
 </html>
+
