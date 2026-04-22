@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -405,20 +405,20 @@
     <section id="screen-rate">
       <div class="card">
         <div class="card-title">✍️ Restaurant bewerten</div>
-        <div class="card-sub">Jedes Gerät kann ein Restaurant genau einmal bewerten. Dieselbe Person kann ihre eigene Bewertung später ändern oder löschen.</div>
+        <div class="card-sub">Jedes Gerät kann ein Restaurant genau einmal bewerten. Das Restaurant muss zwingend aus der Google-Auswahl gewählt werden, damit keine Duplikate durch Tippfehler entstehen.</div>
 
         <label class="field-label" for="voter-name">Dein Name</label>
         <input id="voter-name" class="text-input" type="text" maxlength="60" placeholder="z. B. Anna" />
 
         <label class="field-label" for="restaurant-search">Restaurant</label>
-        <input id="restaurant-search" class="text-input" type="text" placeholder="Restaurant suchen oder Namen eintippen" autocomplete="off" />
-        <div class="hint">Mit Google Places Autocomplete, sobald du einen Google Maps API Key eingetragen hast. Ohne Key kannst du Namen und Adresse auch manuell eintragen.</div>
+        <input id="restaurant-search" class="text-input" type="text" placeholder="Restaurant über Google suchen" autocomplete="off" />
+        <div class="hint">Tippe den Namen an und wähle dann zwingend einen Google-Treffer aus. Erst dadurch werden Name, Adresse und Maps-Link automatisch übernommen und doppelte Restaurants vermieden.</div>
 
         <label class="field-label" for="restaurant-address">Adresse</label>
         <input id="restaurant-address" class="text-input" type="text" placeholder="Adresse oder Ort" />
 
         <div class="badge-line">
-          <span class="pill" id="selected-place-pill">Noch kein Google-Ort ausgewählt</span>
+          <span class="pill" id="selected-place-pill">Bitte Google-Treffer wählen</span>
           <a class="pill hidden" id="maps-preview-link" target="_blank" rel="noopener noreferrer">In Maps öffnen</a>
         </div>
       </div>
@@ -461,13 +461,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // ===============================
-    // KONFIGURATION
-    // ===============================
     const APP_PIN = '806';
     const SUPABASE_URL = 'https://oshrkqtimbkgntbbkxxr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_qKR1ZVGbZBZigEZfoWlmFg_x1oWObV0';
-    const GOOGLE_MAPS_API_KEY = ''; // Optional. Leer lassen = kein Google Autocomplete.
+    const GOOGLE_MAPS_API_KEY = '';
 
     const WEIGHTS = {
       geschmack: 0.214,
@@ -489,15 +486,11 @@
       { key: 'speisekarte', name: 'Speisekarte', weight: '8,3 %' },
     ];
 
-    // ===============================
-    // STATE
-    // ===============================
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const DEVICE_KEY_STORAGE = 'restaurant_app_device_key_v1';
     const APP_UNLOCK_STORAGE = 'restaurant_app_pin_ok_v1';
     const NAME_STORAGE = 'restaurant_app_name_v1';
-    const manualPlacePrefix = 'manual:';
-
+    
     let currentScreen = 'rate';
     let selectedPlace = null;
     let myRatings = [];
@@ -513,9 +506,6 @@
 
     const DEVICE_KEY = getDeviceKey();
 
-    // ===============================
-    // HELPERS
-    // ===============================
     function showToast(message, isError = false) {
       const toast = document.getElementById('toast');
       toast.textContent = message;
@@ -533,19 +523,6 @@
       return '⭐';
     }
 
-    function calculateTotal(scores) {
-      const total =
-        scores.geschmack * WEIGHTS.geschmack +
-        scores.preis_leistung * WEIGHTS.preis_leistung +
-        scores.service * WEIGHTS.service +
-        scores.ambiente * WEIGHTS.ambiente +
-        scores.wartezeit * WEIGHTS.wartezeit +
-        scores.portionsgroesse * WEIGHTS.portionsgroesse +
-        scores.speisekarte * WEIGHTS.speisekarte;
-
-      return Math.round(total * 100) / 100;
-    }
-
     function getScoresFromForm() {
       const scores = {};
       for (const criterion of CRITERIA) {
@@ -555,7 +532,7 @@
     }
 
     function getMapsUrlFromSelection(name, placeId) {
-      if (placeId && !placeId.startsWith(manualPlacePrefix)) {
+      if (placeId) {
         return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
       }
       return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
@@ -568,32 +545,16 @@
       document.getElementById('restaurant-search').value = place.name || '';
       document.getElementById('restaurant-address').value = place.address || '';
 
-      if (place.place_id && !place.place_id.startsWith(manualPlacePrefix)) {
-        pill.textContent = 'Google-Ort ausgewählt';
-      } else {
-        pill.textContent = 'Manueller Ort';
-      }
+      pill.textContent = 'Google-Ort ausgewählt';
 
       const url = getMapsUrlFromSelection(place.name || '', place.place_id || '');
       mapsLink.href = url;
       mapsLink.textContent = 'In Maps öffnen';
       mapsLink.classList.remove('hidden');
     }
-
-    function buildManualPlaceIfNeeded() {
-      const name = document.getElementById('restaurant-search').value.trim();
-      const address = document.getElementById('restaurant-address').value.trim();
-      if (!name) return null;
-
-      if (selectedPlace && selectedPlace.name === name) return selectedPlace;
-
-      const placeId = `${manualPlacePrefix}${name.toLowerCase().replace(/\s+/g, '-')}`;
-      return {
-        place_id: placeId,
-        name,
-        address,
-        maps_url: getMapsUrlFromSelection(name, placeId),
-      };
+    function getSelectedGooglePlace() {
+      if (!selectedPlace || !selectedPlace.place_id) return null;
+      return selectedPlace;
     }
 
     function fillFormFromRating(rating) {
@@ -621,7 +582,7 @@
       selectedPlace = null;
       document.getElementById('restaurant-search').value = '';
       document.getElementById('restaurant-address').value = '';
-      document.getElementById('selected-place-pill').textContent = 'Noch kein Google-Ort ausgewählt';
+      document.getElementById('selected-place-pill').textContent = 'Bitte Google-Treffer wählen';
       document.getElementById('maps-preview-link').classList.add('hidden');
       CRITERIA.forEach((criterion) => {
         document.getElementById(`score-${criterion.key}`).value = 5;
@@ -640,18 +601,15 @@
       if (screen === 'mine') loadMyRatings();
     }
 
-    // ===============================
-    // SUPABASE
-    // ===============================
     async function saveRating() {
       const voterName = document.getElementById('voter-name').value.trim();
-      const place = buildManualPlaceIfNeeded();
+      const place = getSelectedGooglePlace();
       if (!voterName) {
         showToast('Bitte deinen Namen eingeben.', true);
         return;
       }
       if (!place?.name) {
-        showToast('Bitte ein Restaurant wählen oder eintippen.', true);
+        showToast('Bitte ein Restaurant aus der Google-Liste auswählen.', true);
         return;
       }
 
@@ -800,11 +758,11 @@
       showToast('Bewertung zum Bearbeiten geladen.');
     }
 
-    // ===============================
-    // GOOGLE AUTOCOMPLETE
-    // ===============================
     function loadGoogleMaps() {
-      if (!GOOGLE_MAPS_API_KEY) return;
+      if (!GOOGLE_MAPS_API_KEY) {
+        document.getElementById('selected-place-pill').textContent = 'Google API Key fehlt';
+        return;
+      }
       window.initGooglePlaces = () => {
         const input = document.getElementById('restaurant-search');
         const autocomplete = new google.maps.places.Autocomplete(input, {
@@ -830,9 +788,6 @@
       document.head.appendChild(script);
     }
 
-    // ===============================
-    // RENDER
-    // ===============================
     function renderCriteria() {
       const wrap = document.getElementById('criteria-wrap');
       wrap.innerHTML = CRITERIA.map((criterion) => `
@@ -852,7 +807,7 @@
     }
 
     function escapeHtml(value = '') {
-      return value
+      return String(value)
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
@@ -871,7 +826,7 @@
       });
       document.getElementById('restaurant-search').addEventListener('input', () => {
         selectedPlace = null;
-        document.getElementById('selected-place-pill').textContent = 'Manuelle Eingabe';
+        document.getElementById('selected-place-pill').textContent = 'Bitte Google-Treffer wählen';
         document.getElementById('maps-preview-link').classList.add('hidden');
       });
       document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -899,6 +854,10 @@
       renderCriteria();
       bindEvents();
       loadGoogleMaps();
+      if (!GOOGLE_MAPS_API_KEY) {
+        document.getElementById('save-rating-btn').disabled = true;
+        document.getElementById('save-rating-btn').textContent = 'Google Key fehlt';
+      }
       if (localStorage.getItem(APP_UNLOCK_STORAGE) === '1') {
         document.getElementById('pin-input').value = APP_PIN;
         unlockApp();
